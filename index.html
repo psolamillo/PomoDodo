@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PomoDodo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <img src="assets/PomoDodoPlaceHolder.png" alt="Logo">
+        <h1>PomoDodo</h1>
+    </div>
+
+    <div class="main-container">
+        <div class="left-section">
+            <div class="tabs">
+                <button class="tab active">Regular</button>
+                <button class="tab">Custom</button>
+                <button class="tab">Timer</button>
+            </div>
+
+            <div class="timer-card">
+                <div class="timer-display">25:00</div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="timer-controls">
+                    <button class="control-btn pause-btn">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
+                            <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button class="control-btn play-btn">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <polygon points="5,3 19,12 5,21" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bottom-panel">
+                <div class="panel-tabs">
+                    <button class="panel-tab active">Session Log</button>
+                    <button class="panel-tab">Stats</button>
+                </div>
+                <div class="panel-content">
+                    <div class="panel-section"></div>
+                    <div class="panel-section"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="setting-item">
+                <span class="setting-label">Work Timer:</span>
+                <span class="setting-value">25:00</span>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Break Timer:</span>
+                <span class="setting-value">5:00</span>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Notifications:</span>
+                <span class="setting-value">On</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
