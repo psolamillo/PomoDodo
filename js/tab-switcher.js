@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentSeconds = totalSeconds;
     let isRunning = false;
     let activeTab = 'Regular';
+    let timerStartTime = 0; // For Timer functionality
     
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
@@ -59,16 +60,32 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function startTimer() {
         isRunning = true;
-        timerInterval = setInterval(function() {
-            if (currentSeconds > 0) {
-                currentSeconds--;
-                updateDisplay();
-                updateProgress();
+        
+        if (activeTab === 'Timer') {
+            if (currentSeconds === 0) {
+                timerStartTime = Date.now();
             } else {
-                pauseTimer();
-                alert('Timer completed!');
+                // Resume from where we left off
+                timerStartTime = Date.now() - (currentSeconds * 1000);
             }
-        }, 1000);
+            
+            timerInterval = setInterval(function() {
+                currentSeconds = Math.floor((Date.now() - timerStartTime) / 1000);
+                updateTimerDisplay();
+                updateTimerProgress();
+            }, 100);
+        } else {
+            timerInterval = setInterval(function() {
+                if (currentSeconds > 0) {
+                    currentSeconds--;
+                    updateDisplay();
+                    updateProgress();
+                } else {
+                    pauseTimer();
+                    alert('Timer completed!');
+                }
+            }, 1000);
+        }
     }
     
     function pauseTimer() {
@@ -79,17 +96,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function resetTimer() {
         pauseTimer();
         
-        if (activeTab === 'Custom') {
+        if (activeTab === 'Timer') {
+            // For Timer tab, reset to zero
+            currentSeconds = 0;
+            timerStartTime = 0;
+            updateTimerDisplay();
+            updateTimerProgress();
+        } else if (activeTab === 'Custom') {
+            // For Custom tab, use work timer values
             const hours = parseInt(workTimerHours.value) || 0;
             const minutes = parseInt(workTimerMinutes.value) || 0;
             totalSeconds = (hours * 60 + minutes) * 60;
+            currentSeconds = totalSeconds;
+            updateDisplay();
+            updateProgress();
         } else {
+            // For Regular tab, use default 25 minutes
             totalSeconds = 25 * 60;
+            currentSeconds = totalSeconds;
+            updateDisplay();
+            updateProgress();
         }
-        
-        currentSeconds = totalSeconds;
-        updateDisplay();
-        updateProgress();
     }
     
     function updateDisplay() {
@@ -101,5 +128,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateProgress() {
         const progress = ((totalSeconds - currentSeconds) / totalSeconds) * 100;
         progressFill.style.width = `${100 - progress}%`;
+    }
+    
+    function updateTimerDisplay() {
+        const hours = Math.floor(currentSeconds / 3600);
+        const minutes = Math.floor((currentSeconds % 3600) / 60);
+        const seconds = currentSeconds % 60;
+        
+        if (hours > 0) {
+            timerDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        } else {
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }
+    
+    function updateTimerProgress() {
+        // For Timer tab, progress bar fills up instead of depleting
+        // Cap is 100% after 60 minutes
+        const maxTime = 60 * 60;
+        const progress = Math.min((currentSeconds / maxTime) * 100, 100);
+        progressFill.style.width = `${progress}%`;
     }
 });
