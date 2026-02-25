@@ -219,3 +219,40 @@ body {
 .setting-value {
     font-weight: 400;
 }
+
+.timer-inputs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.work-timer-hours,
+.work-timer-minutes {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 400;
+    padding: 0;
+    width: 35px;
+    text-align: right;
+}
+
+.work-timer-hours:focus,
+.work-timer-minutes:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.time-separator {
+    font-weight: 400;
+    margin: 0 1px;
+}
+
+.time-unit {
+    font-weight: 400;
+    font-size: 12px;
+    margin: 0 1px;
+}

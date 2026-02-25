@@ -4,16 +4,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const pauseBtn = document.querySelector('.pause-btn');
     const timerDisplay = document.querySelector('.timer-display');
     const progressFill = document.querySelector('.progress-fill');
+    const workTimerHours = document.querySelector('.work-timer-hours');
+    const workTimerMinutes = document.querySelector('.work-timer-minutes');
     
     let timerInterval;
     let totalSeconds = 25 * 60;
     let currentSeconds = totalSeconds;
     let isRunning = false;
+    let activeTab = 'Regular';
     
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             tabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
+            activeTab = this.textContent;
             
             resetTimer();
         });
@@ -30,6 +34,28 @@ document.addEventListener('DOMContentLoaded', function() {
             pauseTimer();
         }
     });
+    
+    // Update timer display when work timer inputs change
+    workTimerHours.addEventListener('input', function() {
+        if (activeTab === 'Custom') {
+            updateCustomTimerDisplay();
+        }
+    });
+    
+    workTimerMinutes.addEventListener('input', function() {
+        if (activeTab === 'Custom') {
+            updateCustomTimerDisplay();
+        }
+    });
+    
+    function updateCustomTimerDisplay() {
+        const hours = parseInt(workTimerHours.value) || 0;
+        const minutes = parseInt(workTimerMinutes.value) || 0;
+        totalSeconds = (hours * 60 + minutes) * 60;
+        currentSeconds = totalSeconds;
+        updateDisplay();
+        updateProgress();
+    }
     
     function startTimer() {
         isRunning = true;
@@ -52,6 +78,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function resetTimer() {
         pauseTimer();
+        
+        if (activeTab === 'Custom') {
+            const hours = parseInt(workTimerHours.value) || 0;
+            const minutes = parseInt(workTimerMinutes.value) || 0;
+            totalSeconds = (hours * 60 + minutes) * 60;
+        } else {
+            totalSeconds = 25 * 60;
+        }
+        
         currentSeconds = totalSeconds;
         updateDisplay();
         updateProgress();
