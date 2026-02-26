@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const pauseBtn = document.querySelector('.pause-btn');
     const timerDisplay = document.querySelector('.timer-display');
     const progressFill = document.querySelector('.progress-fill');
+    const timerNotification = document.querySelector('.timer-notification');
     const workTimerHours = document.querySelector('.work-timer-hours');
     const workTimerMinutes = document.querySelector('.work-timer-minutes');
     
@@ -12,7 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentSeconds = totalSeconds;
     let isRunning = false;
     let activeTab = 'Regular';
-    let timerStartTime = 0; // For Timer functionality
+    let timerStartTime = 0;
+    let isBreakTimer = false;
+    let breakSeconds = 5 * 60; 
     
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
@@ -62,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isRunning = true;
         
         if (activeTab === 'Timer') {
+            // For Timer tab, start counting up from zero
             if (currentSeconds === 0) {
                 timerStartTime = Date.now();
             } else {
@@ -82,10 +86,51 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateProgress();
                 } else {
                     pauseTimer();
-                    alert('Timer completed!');
+                    
+                    if (!isBreakTimer && (activeTab === 'Regular' || activeTab === 'Custom')) {
+                        startBreakTimer();
+                    } else {
+                        endBreakTimer();
+                    }
                 }
             }, 1000);
         }
+    }
+    
+    function startBreakTimer() {
+        isBreakTimer = true;
+        currentSeconds = breakSeconds;
+        totalSeconds = breakSeconds;
+        timerNotification.textContent = 'Time for a break!';
+        updateDisplay();
+        updateProgress();
+        
+        // Auto-start break timer
+        setTimeout(() => {
+            if (isBreakTimer) {
+                startTimer();
+            }
+        }, 100);
+    }
+    
+    function endBreakTimer() {
+        isBreakTimer = false;
+        timerNotification.textContent = '';
+        
+        // Reset to work timer
+        if (activeTab === 'Custom') {
+            const hours = parseInt(workTimerHours.value) || 0;
+            const minutes = parseInt(workTimerMinutes.value) || 0;
+            totalSeconds = (hours * 60 + minutes) * 60;
+        } else {
+            totalSeconds = 25 * 60;
+        }
+        
+        currentSeconds = totalSeconds;
+        updateDisplay();
+        updateProgress();
+        
+        alert('Break completed! Ready for another session?');
     }
     
     function pauseTimer() {
@@ -95,6 +140,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function resetTimer() {
         pauseTimer();
+        isBreakTimer = false;
+        timerNotification.textContent = '';
         
         if (activeTab === 'Timer') {
             // For Timer tab, reset to zero
@@ -144,8 +191,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateTimerProgress() {
         // For Timer tab, progress bar fills up instead of depleting
-        // Cap is 100% after 60 minutes
-        const maxTime = 60 * 60;
+        // Cap at 100% after 60 minutes
+        const maxTime = 60 * 60; // 60 minutes in seconds
         const progress = Math.min((currentSeconds / maxTime) * 100, 100);
         progressFill.style.width = `${progress}%`;
     }

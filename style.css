@@ -94,6 +94,14 @@ body {
     min-width: 450px;
 }
 
+.timer-notification {
+    font-size: 18px;
+    font-weight: 500;
+    color: #e8742d;
+    min-height: 22px;
+    text-align: center;
+}
+
 .timer-display {
     font-size: 64px;
     font-weight: 500;
