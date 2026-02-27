@@ -29,10 +29,10 @@
                     <div class="progress-fill"></div>
                 </div>
                 <div class="timer-controls">
-                    <button class="control-btn pause-btn">
+                    <button class="control-btn cancel-btn">
                         <svg viewBox="0 0 24 24" width="24" height="24">
-                            <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
-                            <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
+                            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/>
+                            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </button>
                     <button class="control-btn play-btn">
@@ -49,7 +49,13 @@
                     <button class="panel-tab">Stats</button>
                 </div>
                 <div class="panel-content">
-                    <div class="panel-section"></div>
+                    <div class="panel-section">
+                        <div class="session-input-container">
+                            <input type="text" class="session-name-input" placeholder="Enter session name (optional)">
+                            <button class="start-session-btn">Start Session</button>
+                        </div>
+                        <div class="session-list"></div>
+                    </div>
                     <div class="panel-section"></div>
                 </div>
             </div>

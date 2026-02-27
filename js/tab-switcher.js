@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.tab');
     const playBtn = document.querySelector('.play-btn');
-    const pauseBtn = document.querySelector('.pause-btn');
+    const cancelBtn = document.querySelector('.cancel-btn');
     const timerDisplay = document.querySelector('.timer-display');
     const progressFill = document.querySelector('.progress-fill');
     const timerNotification = document.querySelector('.timer-notification');
@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const workTimerMinutes = document.querySelector('.work-timer-minutes');
     const breakTimerHours = document.querySelector('.break-timer-hours');
     const breakTimerMinutes = document.querySelector('.break-timer-minutes');
+    const sessionNameInput = document.querySelector('.session-name-input');
+    const startSessionBtn = document.querySelector('.start-session-btn');
+    const sessionList = document.querySelector('.session-list');
     
     let timerInterval;
     let totalSeconds = 25 * 60;
@@ -18,6 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let timerStartTime = 0;
     let isBreakTimer = false;
     let breakSeconds = 5 * 60;
+    let sessionStartTime = 0;
+    let currentSessionName = '';
+    let sessionCounter = 1;
+    let sessions = [];
     
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
@@ -35,11 +42,89 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    pauseBtn.addEventListener('click', function() {
-        if (isRunning) {
-            pauseTimer();
+    cancelBtn.addEventListener('click', function() {
+        if (isRunning && !isBreakTimer) {
+            cancelSession();
         }
     });
+    
+    startSessionBtn.addEventListener('click', function() {
+        startNewSession();
+    });
+    
+    function startNewSession() {
+        const sessionName = sessionNameInput.value.trim();
+        currentSessionName = sessionName || `Task #${sessionCounter}`;
+        sessionCounter++;
+        sessionNameInput.value = '';
+        
+        // Reset timer for new session
+        resetTimer();
+    }
+    
+    function cancelSession() {
+        if (currentSessionName) {
+            const workedTime = totalSeconds - currentSeconds;
+            addSessionToLog(currentSessionName, workedTime);
+        }
+        
+        // Reset timer
+        pauseTimer();
+        isBreakTimer = false;
+        timerNotification.textContent = '';
+        
+        if (activeTab === 'Timer') {
+            currentSeconds = 0;
+            timerStartTime = 0;
+            updateTimerDisplay();
+            updateTimerProgress();
+        } else if (activeTab === 'Custom') {
+            const hours = parseInt(workTimerHours.value) || 0;
+            const minutes = parseInt(workTimerMinutes.value) || 0;
+            totalSeconds = (hours * 60 + minutes) * 60;
+            currentSeconds = totalSeconds;
+            updateDisplay();
+            updateProgress();
+        } else {
+            totalSeconds = 25 * 60;
+            currentSeconds = totalSeconds;
+            updateDisplay();
+            updateProgress();
+        }
+        
+        currentSessionName = '';
+    }
+    
+    function addSessionToLog(name, workedSeconds) {
+        const session = {
+            name: name,
+            time: workedSeconds,
+            timestamp: new Date()
+        };
+        
+        sessions.push(session);
+        updateSessionList();
+    }
+    
+    function updateSessionList() {
+        sessionList.innerHTML = '';
+        
+        sessions.forEach(session => {
+            const sessionItem = document.createElement('div');
+            sessionItem.className = 'session-item';
+            
+            const minutes = Math.floor(session.time / 60);
+            const seconds = session.time % 60;
+            const timeString = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+            
+            sessionItem.innerHTML = `
+                <span class="session-name">${session.name}</span>
+                <span class="session-time">${timeString}</span>
+            `;
+            
+            sessionList.appendChild(sessionItem);
+        });
+    }
     
     // Update timer display when work timer inputs change
     workTimerHours.addEventListener('input', function() {
@@ -92,11 +177,9 @@ document.addEventListener('DOMContentLoaded', function() {
         isRunning = true;
         
         if (activeTab === 'Timer') {
-            // For Timer tab, start counting up from zero
             if (currentSeconds === 0) {
                 timerStartTime = Date.now();
             } else {
-                // Resume from where we left off
                 timerStartTime = Date.now() - (currentSeconds * 1000);
             }
             
@@ -106,6 +189,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateTimerProgress();
             }, 100);
         } else {
+            if (!isBreakTimer && !sessionStartTime) {
+                sessionStartTime = Date.now();
+            }
+            
             timerInterval = setInterval(function() {
                 if (currentSeconds > 0) {
                     currentSeconds--;
@@ -115,6 +202,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     pauseTimer();
                     
                     if (!isBreakTimer && (activeTab === 'Regular' || activeTab === 'Custom')) {
+                        if (currentSessionName) {
+                            const workedTime = totalSeconds;
+                            addSessionToLog(currentSessionName, workedTime);
+                            currentSessionName = '';
+                        }
+                        sessionStartTime = 0;
+                        
                         startBreakTimer();
                     } else {
                         endBreakTimer();
@@ -139,7 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDisplay();
         updateProgress();
         
-        // Auto-start break timer
         setTimeout(() => {
             if (isBreakTimer) {
                 startTimer();
@@ -151,7 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
         isBreakTimer = false;
         timerNotification.textContent = '';
         
-        // Reset to work timer
         if (activeTab === 'Custom') {
             const hours = parseInt(workTimerHours.value) || 0;
             const minutes = parseInt(workTimerMinutes.value) || 0;
@@ -176,9 +268,9 @@ document.addEventListener('DOMContentLoaded', function() {
         pauseTimer();
         isBreakTimer = false;
         timerNotification.textContent = '';
+        sessionStartTime = 0;
         
         if (activeTab === 'Timer') {
-            // For Timer tab, reset to zero
             currentSeconds = 0;
             timerStartTime = 0;
             updateTimerDisplay();
