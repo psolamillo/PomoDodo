@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const workTimerMinutes = document.querySelector('.work-timer-minutes');
     const breakTimerHours = document.querySelector('.break-timer-hours');
     const breakTimerMinutes = document.querySelector('.break-timer-minutes');
-    const sessionNameInput = document.querySelector('.session-name-input');
-    const startSessionBtn = document.querySelector('.start-session-btn');
     const sessionList = document.querySelector('.session-list');
+    const totalTimeElement = document.getElementById('total-time');
+    const totalSessionsElement = document.getElementById('total-sessions');
     
     let timerInterval;
     let totalSeconds = 25 * 60;
@@ -47,19 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
             cancelSession();
         }
     });
-    
-    startSessionBtn.addEventListener('click', function() {
-        startNewSession();
-    });
-    
-    function startNewSession() {
-        const sessionName = sessionNameInput.value.trim();
-        currentSessionName = sessionName || `Task #${sessionCounter}`;
-        sessionCounter++;
-        sessionNameInput.value = '';
-        
-        resetTimer();
-    }
     
     function cancelSession() {
         if (currentSessionName) {
@@ -102,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         sessions.push(session);
         updateSessionList();
+        updateStats();
     }
     
     function updateSessionList() {
@@ -124,7 +112,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Update timer display when work timer inputs change
+    function updateStats() {
+        const totalSessions = sessions.length;
+        const totalSeconds = sessions.reduce((sum, session) => sum + session.time, 0);
+        
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        
+        let timeString = '';
+        if (hours > 0) {
+            timeString = `${hours}h ${minutes}m ${seconds}s`;
+        } else if (minutes > 0) {
+            timeString = `${minutes}m ${seconds}s`;
+        } else {
+            timeString = `${seconds}s`;
+        }
+        
+        totalTimeElement.textContent = timeString;
+        totalSessionsElement.textContent = totalSessions;
+    }
+    
     workTimerHours.addEventListener('input', function() {
         if (activeTab === 'Custom') {
             updateCustomTimerDisplay();
@@ -279,7 +287,6 @@ document.addEventListener('DOMContentLoaded', function() {
             updateTimerDisplay();
             updateTimerProgress();
         } else if (activeTab === 'Custom') {
-            // For Custom tab, use work timer values
             const hours = parseInt(workTimerHours.value) || 0;
             const minutes = parseInt(workTimerMinutes.value) || 0;
             totalSeconds = (hours * 60 + minutes) * 60;
@@ -287,7 +294,6 @@ document.addEventListener('DOMContentLoaded', function() {
             updateDisplay();
             updateProgress();
         } else {
-            // For Regular tab, use default 25 minutes
             totalSeconds = 25 * 60;
             currentSeconds = totalSeconds;
             updateDisplay();
@@ -319,9 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateTimerProgress() {
-        // For Timer tab, progress bar fills up instead of depleting
-        // Cap at 100% after 60 minutes
-        const maxTime = 60 * 60; // 60 minutes in seconds
+        const maxTime = 60 * 60;
         const progress = Math.min((currentSeconds / maxTime) * 100, 100);
         progressFill.style.width = `${progress}%`;
     }
