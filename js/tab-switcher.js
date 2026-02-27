@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionCounter++;
         sessionNameInput.value = '';
         
-        // Reset timer for new session
         resetTimer();
     }
     
@@ -67,8 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const workedTime = totalSeconds - currentSeconds;
             addSessionToLog(currentSessionName, workedTime);
         }
-        
-        // Reset timer
+      
         pauseTimer();
         isBreakTimer = false;
         timerNotification.textContent = '';
@@ -189,6 +187,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateTimerProgress();
             }, 100);
         } else {
+            if (!isBreakTimer && !currentSessionName) {
+                currentSessionName = `Task #${sessionCounter}`;
+                sessionCounter++;
+            }
+            
             if (!isBreakTimer && !sessionStartTime) {
                 sessionStartTime = Date.now();
             }

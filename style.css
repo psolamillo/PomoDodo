@@ -265,44 +265,6 @@ body {
     margin: 0 1px;
 }
 
-.session-input-container {
-    display: flex;
-    gap: 10px;
-    padding: 10px;
-    border-bottom: 1px solid #c97b5a;
-}
-
-.session-name-input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #c97b5a;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.3);
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 14px;
-}
-
-.session-name-input:focus {
-    outline: none;
-    background-color: rgba(255, 255, 255, 0.5);
-}
-
-.start-session-btn {
-    padding: 8px 15px;
-    background-color: #e8742d;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.start-session-btn:hover {
-    background-color: #d06628;
-}
-
 .session-list {
     flex: 1;
     overflow-y: auto;
