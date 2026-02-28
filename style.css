@@ -83,6 +83,11 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.tab:active {
+    background-color: rgba(0, 0, 0, 0.2);
+    transform: scale(0.98);
+}
+
 .timer-card {
     background-color: #f5c4a1;
     border-radius: 15px;
@@ -153,11 +158,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.3s;
+    transition: color 0.3s, transform 0.1s;
 }
 
 .control-btn:hover {
     color: #000;
+}
+
+.control-btn:active {
+    color: #666;
+    transform: scale(0.95);
 }
 
 .control-btn svg {
@@ -190,6 +200,16 @@ body {
     cursor: pointer;
     text-align: left;
     padding-left: 30px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.panel-tab:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.panel-tab:active {
+    background-color: rgba(0, 0, 0, 0.15);
+    transform: scale(0.98);
 }
 
 .panel-content {
