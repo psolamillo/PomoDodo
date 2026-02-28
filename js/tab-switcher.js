@@ -110,6 +110,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             sessionList.appendChild(sessionItem);
         });
+        
+        sessionList.scrollTop = sessionList.scrollHeight;
     }
     
     function updateStats() {
