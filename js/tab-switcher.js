@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sessionList = document.querySelector('.session-list');
     const totalTimeElement = document.getElementById('total-time');
     const totalSessionsElement = document.getElementById('total-sessions');
+    const notificationsToggle = document.getElementById('notifications-toggle');
     
     let timerInterval;
     let totalSeconds = 25 * 60;
@@ -247,7 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         sessionStartTime = 0;
                         
-                        alert('Work session completed! Time for a break.');
+                        if (notificationsToggle.checked) {
+                            alert('Work session completed! Time for a break.');
+                        }
                         startBreakTimer();
                     } else {
                         endBreakTimer();
@@ -296,7 +299,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updateProgress();
         
         updateTabTitle();
-        alert('Break completed! Ready for another session?');
+        if (notificationsToggle.checked) {
+            alert('Break completed! Ready for another session?');
+        }
     }
     
     function pauseTimer() {
