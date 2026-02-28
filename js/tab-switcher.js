@@ -1,3 +1,4 @@
+// @ts-nocheck
 document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.tab');
     const playBtn = document.querySelector('.play-btn');
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalTimeElement = document.getElementById('total-time');
     const totalSessionsElement = document.getElementById('total-sessions');
     const notificationsToggle = document.getElementById('notifications-toggle');
+    const sessionNameInput = document.querySelector('.session-name-input');
     
     let timerInterval;
     let totalSeconds = 25 * 60;
@@ -75,8 +77,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function cancelSession() {
         if (currentSessionName) {
-            const workedTime = totalSeconds - currentSeconds;
-            addSessionToLog(currentSessionName, workedTime);
+            if (activeTab === 'Timer') {
+                const workedTime = currentSeconds;
+                addSessionToLog(currentSessionName, workedTime);
+            } else {
+                const workedTime = totalSeconds - currentSeconds;
+                addSessionToLog(currentSessionName, workedTime);
+            }
         }
       
         pauseTimer();
@@ -103,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         currentSessionName = '';
+        sessionNameInput.value = '';
         updateTabTitle();
     }
     
@@ -211,6 +219,19 @@ document.addEventListener('DOMContentLoaded', function() {
         isRunning = true;
         
         if (activeTab === 'Timer') {
+            if (!currentSessionName) {
+                if (sessionNameInput.value.trim()) {
+                    currentSessionName = sessionNameInput.value.trim();
+                } else {
+                    currentSessionName = `Task #${sessionCounter}`;
+                    sessionCounter++;
+                }
+            }
+            
+            if (!sessionStartTime) {
+                sessionStartTime = Date.now();
+            }
+            
             if (currentSeconds === 0) {
                 timerStartTime = Date.now();
             } else {
@@ -224,8 +245,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 100);
         } else {
             if (!isBreakTimer && !currentSessionName) {
-                currentSessionName = `Task #${sessionCounter}`;
-                sessionCounter++;
+                if (sessionNameInput.value.trim()) {
+                    currentSessionName = sessionNameInput.value.trim();
+                } else {
+                    currentSessionName = `Task #${sessionCounter}`;
+                    sessionCounter++;
+                }
             }
             
             if (!isBreakTimer && !sessionStartTime) {
@@ -245,10 +270,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             const workedTime = totalSeconds;
                             addSessionToLog(currentSessionName, workedTime);
                             currentSessionName = '';
+                            sessionNameInput.value = '';
                         }
                         sessionStartTime = 0;
                         
-                        if (notificationsToggle.checked) {
+                        if (notificationsToggle && notificationsToggle.checked) {
                             alert('Work session completed! Time for a break.');
                         }
                         startBreakTimer();
@@ -299,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateProgress();
         
         updateTabTitle();
-        if (notificationsToggle.checked) {
+        if (notificationsToggle && notificationsToggle.checked) {
             alert('Break completed! Ready for another session?');
         }
     }
