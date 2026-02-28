@@ -26,6 +26,29 @@ document.addEventListener('DOMContentLoaded', function() {
     let sessionCounter = 1;
     let sessions = [];
     
+    function updateTabTitle() {
+        if (isRunning) {
+            const minutes = Math.floor(currentSeconds / 60);
+            const seconds = currentSeconds % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            let timerType = '';
+            if (isBreakTimer) {
+                timerType = 'Break';
+            } else if (activeTab === 'Regular') {
+                timerType = 'Work';
+            } else if (activeTab === 'Custom') {
+                timerType = 'Work(Custom)';
+            } else if (activeTab === 'Timer') {
+                timerType = 'Count-up';
+            }
+            
+            document.title = `${timeString} - ${timerType} - PomoDodo`;
+        } else {
+            document.title = 'PomoDodo';
+        }
+    }
+    
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             tabs.forEach(t => t.classList.remove('active'));
@@ -33,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             activeTab = this.textContent;
             
             resetTimer();
+            updateTabTitle();
         });
     });
     
@@ -78,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         currentSessionName = '';
+        updateTabTitle();
     }
     
     function addSessionToLog(name, workedSeconds) {
@@ -222,6 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         sessionStartTime = 0;
                         
+                        alert('Work session completed! Time for a break.');
                         startBreakTimer();
                     } else {
                         endBreakTimer();
@@ -269,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDisplay();
         updateProgress();
         
+        updateTabTitle();
         alert('Break completed! Ready for another session?');
     }
     
@@ -301,12 +328,15 @@ document.addEventListener('DOMContentLoaded', function() {
             updateDisplay();
             updateProgress();
         }
+        
+        updateTabTitle();
     }
     
     function updateDisplay() {
         const minutes = Math.floor(currentSeconds / 60);
         const seconds = currentSeconds % 60;
         timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        updateTabTitle();
     }
     
     function updateProgress() {
@@ -324,6 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
+        updateTabTitle();
     }
     
     function updateTimerProgress() {
