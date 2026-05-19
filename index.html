@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PomoDodo</title>
+    <script src="pomododoTimer.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <header class="header">
+
+        <nav class="navigation">
+            <div class="navigation__logo">
+                <img src="images/PomoDodo.svg" alt="PomoDodo Logo" width="40" height="40">
+                <h1>PomoDodo</h1>
+            </div>
+            
+
+            <div class="navigation__menu">
+                <button class="navigation__button">About</button>
+                <button class="navigation__button">Stats</button>
+                <button class="navigation__button">Github</button>
+            </div>    
+        </nav>
+    </header>
+    
+    <main>
+        <div class="timer">
+            <div class="timer__type-selection">
+                <button class="timer__type-button">Standard</button>
+                <button class="timer__type-button">Custom</button>
+                <button class="timer__type-button">Timer</button>
+            </div>
+
+            <div class="timer__display">
+                <p>Temporary Display</p>
+            </div>
+
+            <div class="timer__controls">
+                <button class="timer__button">Restart</button>
+                <button class="timercontrol__button">Pause</button>
+                <button class="timercontrol__button">Continue</button>
+            </div>
+        </div>
+
+        <div class="session-log">
+            <h3>Session Log</h3>
+            <h4>Sessions</h4>
+            <h4>Total Time</h4>
+        </div>
+    </main>
+
+</body>
+</html>

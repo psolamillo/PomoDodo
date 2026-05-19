@@ -1,0 +1,40 @@
+.navigation {
+    display: flex;
+    justify-content: space-between;
+}
+
+.navigation__logo {
+    display: flex;
+}
+
+main {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex: 0 1 auto;
+}
+
+.timer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    flex-basis: 250px;
+    outline-style: solid;
+    width: 500px;
+    padding: 50px;
+    border-radius: 30px;
+}
+
+.timer__type-selection {
+    display: flex;
+    width: 80%;
+    justify-content: space-between;
+}
+
+.timer__controls {
+    display: flex;
+    width: 80%;
+    justify-content: center;
+    gap: 50px;
+}
