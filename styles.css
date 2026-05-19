@@ -14,7 +14,8 @@ main {
     flex: 0 1 auto;
 }
 
-.timer {
+.timer , .session-log{
+    margin: 30px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -26,6 +27,11 @@ main {
     border-radius: 30px;
 }
 
+.session-log {
+    display: flex;
+    justify-content: start;
+    padding: 20px 50px;
+}
 .timer__type-selection {
     display: flex;
     width: 80%;
