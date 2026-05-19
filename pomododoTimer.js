@@ -1,5 +1,3 @@
-let timerMode = "Standard";
-
 const countdownTimerDisplay = document.querySelector(".timer__display p");
 
 const buttonTimerControls = document.querySelectorAll(".timer__controls button");
@@ -16,17 +14,37 @@ function handleContinue(){
     console.log("continue logic handler");
 }
 
+function handleStandard(){
+    console.log("standard timer");
+}
+function handleCustom(){
+    console.log("Cusom timer");
+}
+function handleTimer(){
+    console.log("count up timer");
+}
+
+
 const actions = {
     Restart: handleRestart,
     Pause: handlePause,
     Continue: handleContinue,
 }
 
-console.log(buttonTypeSelector);
+const mode = {
+    Standard: handleStandard,
+    Custom: handleCustom,
+    Timer: handleTimer,
+
+}
+
 buttonTypeSelector.forEach(button => {
     button.addEventListener('click', (e) => {
-        timerMode = `${e.target.textContent}`
-        console.log(`Timer Mode set to ${timerMode}`)
+        let currentButton = mode[e.target.dataset.mode];
+        
+        if (currentButton) {
+            currentButton();
+        }
     })
 })
 
