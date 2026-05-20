@@ -17,11 +17,8 @@ const customSettingForm = document.querySelector(".custom-settings-menu form");
 console.log(customSettingForm)
 function handleRestart(){
     clearInterval(refreshId);
-    if (currentMode === 'Custom') {
-        handleCustom();
-    } else {
-        handleStandard();
-    }
+    leftOverTime = 0;
+    startTimer();
 }
 function handlePause(){
     isPaused = true;
@@ -30,26 +27,32 @@ function handlePause(){
 }
 function handleContinue(){
     isPaused = false;
-    timerCountdown(leftOverTime);
+    if (leftOverTime > 0) {
+        timerCountdown(leftOverTime);
+    } else {
+        startTimer();
+    }
+}
+
+function startTimer(){
+    if (currentMode === 'Custom') {
+        timerCountdown((customWorkTime || 25) * 60000);
+    } else {
+        timerCountdown(25 * 60000);
+    }
 }
 
 function handleStandard(){
     currentMode = 'Standard';
-    countdownTimeInMins = 25;
-    timerCountdown(countdownTimeInMins * 60000);
 }
 function handleCustom(workTime){
-    console.log("Custom timer called with workTime:", workTime);
     currentMode = 'Custom';
     if (workTime !== undefined) {
         customWorkTime = workTime;
     }
-    console.log("customWorkTime after assignment:", customWorkTime);
-    console.log("Starting countdown with:", (customWorkTime || 25) * 60000, "ms");
-    timerCountdown((customWorkTime || 25) * 60000);
 }
 function handleTimer(){
-    console.log("count up timer");
+    currentMode = 'Timer';
 }
 
 function timerCountdown(timeInMillisec){
