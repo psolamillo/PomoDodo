@@ -4,6 +4,7 @@ let isPaused = false;
 let currentMode;
 let refreshId;
 let targetEndTime;
+let customWorkTime = 0;
 
 const countdownTimerDisplay = document.querySelector(".timer__display p");
 
@@ -15,7 +16,12 @@ const customSettingForm = document.querySelector(".custom-settings-menu form");
 
 console.log(customSettingForm)
 function handleRestart(){
-    console.log("restart logic handler");
+    clearInterval(refreshId);
+    if (currentMode === 'Custom') {
+        handleCustom();
+    } else {
+        handleStandard();
+    }
 }
 function handlePause(){
     isPaused = true;
@@ -28,20 +34,26 @@ function handleContinue(){
 }
 
 function handleStandard(){
+    currentMode = 'Standard';
     countdownTimeInMins = 25;
     timerCountdown(countdownTimeInMins * 60000);
 }
 function handleCustom(workTime){
-    console.log("Cusom timer");
-    timerCountdown(workTime * 60000);
-   
+    console.log("Custom timer called with workTime:", workTime);
+    currentMode = 'Custom';
+    if (workTime !== undefined) {
+        customWorkTime = workTime;
+    }
+    console.log("customWorkTime after assignment:", customWorkTime);
+    console.log("Starting countdown with:", (customWorkTime || 25) * 60000, "ms");
+    timerCountdown((customWorkTime || 25) * 60000);
 }
 function handleTimer(){
     console.log("count up timer");
 }
 
 function timerCountdown(timeInMillisec){
-    
+    clearInterval(refreshId);
     //All times stored in milliseconds
     targetEndTime = Date.now() + timeInMillisec;
 
@@ -81,10 +93,11 @@ const mode = {
 
 customSettingForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    
-    let workTime = e.target.sessiontime.value;
-    let breakTime = e.target.breaktime.value;
-    console.log(workTime, breakTime);
+    console.log("Form submitted");
+
+    let workTime = parseInt(e.target.sessiontime.value);
+    let breakTime = parseInt(e.target.breaktime.value);
+    console.log("workTime:", workTime, "breakTime:", breakTime);
     handleCustom(workTime);
 });
 
