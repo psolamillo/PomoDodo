@@ -1,6 +1,7 @@
 let countdownTimeInMins = 0;
 let leftOverTime = 0;
 let isPaused = false;
+let currentMode;
 let refreshId;
 let targetEndTime;
 
@@ -10,6 +11,9 @@ const buttonTimerControls = document.querySelectorAll(".timer__controls button")
 
 const buttonTypeSelector = document.querySelectorAll(".timer__type-selection button");
 
+const customSettingForm = document.querySelector(".custom-settings-menu form");
+
+console.log(customSettingForm)
 function handleRestart(){
     console.log("restart logic handler");
 }
@@ -24,11 +28,13 @@ function handleContinue(){
 }
 
 function handleStandard(){
-    countdownTimeInMins = 25
+    countdownTimeInMins = 25;
     timerCountdown(countdownTimeInMins * 60000);
 }
-function handleCustom(){
+function handleCustom(workTime){
     console.log("Cusom timer");
+    timerCountdown(workTime * 60000);
+   
 }
 function handleTimer(){
     console.log("count up timer");
@@ -41,6 +47,7 @@ function timerCountdown(timeInMillisec){
 
     refreshId = setInterval(() => {
 
+        
         let difference = targetEndTime - Date.now();
 
         var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -71,6 +78,15 @@ const mode = {
     Timer: handleTimer,
 
 }
+
+customSettingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    let workTime = e.target.sessiontime.value;
+    let breakTime = e.target.breaktime.value;
+    console.log(workTime, breakTime);
+    handleCustom(workTime);
+});
 
 buttonTypeSelector.forEach(button => {
     button.addEventListener('click', (e) => {

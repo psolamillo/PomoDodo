@@ -27,6 +27,7 @@
     </header>
     
     <main>
+        
         <div class="timer">
             <div class="timer__type-selection">
                 <button class="timer__type-button" data-mode="Standard">Standard</button>
@@ -45,6 +46,21 @@
             </div>
         </div>
 
+        <div class="custom-settings-menu">
+            <form></form>
+                <h3>Custom Settings</h3>
+                <label for="sessiontime">Time (Minutes): </label>
+                <input type="number" id="sessiontime" name="sessiontime" placeholder="25" required>
+                <label for="breaktime">Break (Minutes): </label>
+                <input type="number" id="breaktime" name="breaktime" placeholder="5" required>
+
+                <div>
+                    <input type ="reset">
+                    <input type="submit">
+                </div>
+            </form>
+
+        </div>
         <div class="session-log">
             <h3>Session Log</h3>
         </div>
