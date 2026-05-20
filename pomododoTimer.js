@@ -1,3 +1,9 @@
+let countdownTimeInMins = 0;
+let leftOverTime = 0;
+let isPaused = false;
+let refreshId;
+let targetEndTime;
+
 const countdownTimerDisplay = document.querySelector(".timer__display p");
 
 const buttonTimerControls = document.querySelectorAll(".timer__controls button");
@@ -8,14 +14,18 @@ function handleRestart(){
     console.log("restart logic handler");
 }
 function handlePause(){
-    console.log("pause logic handler");
+    isPaused = true;
+    leftOverTime = targetEndTime - Date.now();
+    clearInterval(refreshId);
 }
 function handleContinue(){
-    console.log("continue logic handler");
+    isPaused = false;
+    timerCountdown(leftOverTime);
 }
 
 function handleStandard(){
-    console.log("standard timer");
+    countdownTimeInMins = 25
+    timerCountdown(countdownTimeInMins * 60000);
 }
 function handleCustom(){
     console.log("Cusom timer");
@@ -24,25 +34,22 @@ function handleTimer(){
     console.log("count up timer");
 }
 
-function timerCountdown(timeInMins){
+function timerCountdown(timeInMillisec){
     
     //All times stored in milliseconds
-    let countdownTime = new Date().getTime() + (timeInMins * 60 * 1000);
-    let now = new Date().getTime();
-    let difference = countdownTime - now;
-    
-    let refreshId = setInterval(() => {
-        
+    targetEndTime = Date.now() + timeInMillisec;
+
+    refreshId = setInterval(() => {
+
+        let difference = targetEndTime - Date.now();
 
         var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-        difference = difference - 1000;
-    
         countdownTimerDisplay.textContent =  hours + "h "+ minutes + "m " + seconds + "s ";
 
-        if (difference < -1){
+        if (difference < 0){
             alert("countdown complete");
             clearInterval(refreshId);
         }
@@ -52,7 +59,6 @@ function timerCountdown(timeInMins){
 
 }
 
-timerCountdown(1)
 const actions = {
     Restart: handleRestart,
     Pause: handlePause,
