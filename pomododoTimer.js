@@ -24,7 +24,35 @@ function handleTimer(){
     console.log("count up timer");
 }
 
+function timerCountdown(timeInMins){
+    
+    //All times stored in milliseconds
+    let countdownTime = new Date().getTime() + (timeInMins * 60 * 1000);
+    let now = new Date().getTime();
+    let difference = countdownTime - now;
+    
+    let refreshId = setInterval(() => {
+        
 
+        var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        difference = difference - 1000;
+    
+        countdownTimerDisplay.textContent =  hours + "h "+ minutes + "m " + seconds + "s ";
+
+        if (difference < -1){
+            alert("countdown complete");
+            clearInterval(refreshId);
+        }
+        
+    }, 1000)
+    
+
+}
+
+timerCountdown(1)
 const actions = {
     Restart: handleRestart,
     Pause: handlePause,
