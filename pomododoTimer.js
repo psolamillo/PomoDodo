@@ -1,8 +1,11 @@
 let countdownTimeInMins = 0;
 let leftOverTime = 0;
+let leftOverTotalTime = 0;
 let isPaused = false;
 let currentMode;
 let refreshId;
+let totalTime = 0;
+let startTime;
 let targetEndTime;
 let customWorkTime = 0;
 let customBreakTime = 0;
@@ -20,11 +23,18 @@ const customSettingForm = document.querySelector(".custom-settings-menu form");
 
 function handleRestart(){
     clearInterval(refreshId);
+    totalTime = 0;
     leftOverTime = 0;
 }
 function handlePause(){
     isPaused = true;
-    leftOverTime = targetEndTime - Date.now();
+    if (currentMode === 'Custom' || currentMode === 'Standard'){
+        leftOverTime = targetEndTime - Date.now();
+    }
+    else if (currentMode === 'Timer'){
+        leftOverTotalTime = totalTime;
+    }
+
     clearInterval(refreshId);
 }
 function handleContinue(){
@@ -43,14 +53,17 @@ async function startTimer(){
         currentModeDisplay.textContent = "Take a break!"
         await timerCountdown((customBreakTime || 5) * 60000);
         alert("Break Complete! Start another session!")
+      
 
-    } else {
+    } else if (currentMode === 'Standard'){
         currentModeDisplay.textContent = "Time to Work!"
         await timerCountdown(25 * 60000);
         alert("Time for a break! Click ok to continue");
         currentModeDisplay.textContent = "Take a break!"
         await timerCountdown(5 * 60000);
         alert("Break Complete! Start another session!")
+    } else if (currentMode === 'Timer'){
+        timerCountUp();
     }
     
 }
@@ -65,11 +78,11 @@ function handleCustom(workTime, breakTime){
     }
     if (breakTime !== undefined) {
         customBreakTime = breakTime;
-        console.log(customBreakTime);
     }
 }
 function handleTimer(){
     currentMode = 'Timer';
+    console.log("Current Mode: Timer");
 }
 
 
@@ -80,12 +93,13 @@ function timerCountdown(timeInMillisec){
         clearInterval(refreshId);
         //All times stored in milliseconds
         targetEndTime = Date.now() + timeInMillisec;
-
+        
         refreshId = setInterval(() => {
 
             
             let difference = targetEndTime - Date.now();
 
+            //Convert the time in millisec to respective time units
             var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((difference % (1000 * 60)) / 1000);
@@ -100,6 +114,29 @@ function timerCountdown(timeInMillisec){
         }, 1000)
     })
 
+}
+
+function timerCountUp(){
+
+    clearInterval(refreshId);
+    startTime = Date.now();
+    refreshId = setInterval(() => {
+        
+            if (leftOverTotalTime != 0) {
+                totalTime = (Date.now() - startTime) + leftOverTotalTime;
+            } else {
+                totalTime = Date.now() - startTime;
+            }
+            
+
+            //Convert the time in millisec to respective time units
+            var hours = Math.floor((totalTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
+
+            countdownTimerDisplay.textContent =  hours + "h "+ minutes + "m " + seconds + "s ";
+            
+        }, 1000)
 }
 
 const actions = {
