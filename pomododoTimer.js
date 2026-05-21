@@ -25,6 +25,17 @@ const customSettingForm = document.querySelector(".custom-settings-menu form");
 
 const sessionLogContainer = document.querySelector(".session-log__entries");
 
+function hideCustomSettingsMenu(hide){
+    if (hide) {
+        customSettingForm.style.display = 'none';
+    }
+
+    if (!hide){
+        customSettingForm.style.display = 'flex';
+    }
+
+}
+
 function handleRestart(){
     if (sessionStartTime) {
         const duration = Date.now() - sessionStartTime;
@@ -121,9 +132,11 @@ async function startTimer(){
 
 function handleStandard(){
     currentMode = 'Standard';
+    hideCustomSettingsMenu(true);
 }
 function handleCustom(workTime, breakTime){
     currentMode = 'Custom';
+    hideCustomSettingsMenu(false);
     if (workTime !== undefined) {
         customWorkTime = workTime;
     }
@@ -133,6 +146,7 @@ function handleCustom(workTime, breakTime){
 }
 function handleTimer(){
     currentMode = 'Timer';
+    hideCustomSettingsMenu(true);
     console.log("Current Mode: Timer");
 }
 
@@ -223,3 +237,4 @@ buttonTimerControls.forEach(button => {
     })
 })
 
+hideCustomSettingsMenu(true);
