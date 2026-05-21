@@ -5,8 +5,12 @@ let currentMode;
 let refreshId;
 let targetEndTime;
 let customWorkTime = 0;
+let customBreakTime = 0;
+
 
 const countdownTimerDisplay = document.querySelector(".timer__display p");
+
+const currentModeDisplay = document.querySelector(".timer__display h3");
 
 const buttonTimerControls = document.querySelectorAll(".timer__controls button");
 
@@ -14,11 +18,9 @@ const buttonTypeSelector = document.querySelectorAll(".timer__type-selection but
 
 const customSettingForm = document.querySelector(".custom-settings-menu form");
 
-console.log(customSettingForm)
 function handleRestart(){
     clearInterval(refreshId);
     leftOverTime = 0;
-    startTimer();
 }
 function handlePause(){
     isPaused = true;
@@ -34,50 +36,69 @@ function handleContinue(){
     }
 }
 
-function startTimer(){
+async function startTimer(){
     if (currentMode === 'Custom') {
-        timerCountdown((customWorkTime || 25) * 60000);
+        await timerCountdown((customWorkTime || 25) * 60000);
+        alert("Time for a break! Click ok to continue");
+        currentModeDisplay.textContent = "Take a break!"
+        await timerCountdown((customBreakTime || 5) * 60000);
+        alert("Break Complete! Start another session!")
+
     } else {
-        timerCountdown(25 * 60000);
+        currentModeDisplay.textContent = "Time to Work!"
+        await timerCountdown(25 * 60000);
+        alert("Time for a break! Click ok to continue");
+        currentModeDisplay.textContent = "Take a break!"
+        await timerCountdown(5 * 60000);
+        alert("Break Complete! Start another session!")
     }
+    
 }
 
 function handleStandard(){
     currentMode = 'Standard';
 }
-function handleCustom(workTime){
+function handleCustom(workTime, breakTime){
     currentMode = 'Custom';
     if (workTime !== undefined) {
         customWorkTime = workTime;
+    }
+    if (breakTime !== undefined) {
+        customBreakTime = breakTime;
+        console.log(customBreakTime);
     }
 }
 function handleTimer(){
     currentMode = 'Timer';
 }
 
+
 function timerCountdown(timeInMillisec){
-    clearInterval(refreshId);
-    //All times stored in milliseconds
-    targetEndTime = Date.now() + timeInMillisec;
-
-    refreshId = setInterval(() => {
-
-        
-        let difference = targetEndTime - Date.now();
-
-        var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-        countdownTimerDisplay.textContent =  hours + "h "+ minutes + "m " + seconds + "s ";
-
-        if (difference < 0){
-            alert("countdown complete");
-            clearInterval(refreshId);
-        }
-        
-    }, 1000)
     
+    
+    return new Promise ((resolve) => {
+        clearInterval(refreshId);
+        //All times stored in milliseconds
+        targetEndTime = Date.now() + timeInMillisec;
+
+        refreshId = setInterval(() => {
+
+            
+            let difference = targetEndTime - Date.now();
+
+            var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            countdownTimerDisplay.textContent =  hours + "h "+ minutes + "m " + seconds + "s ";
+
+            if (difference < 0){
+                clearInterval(refreshId);
+                resolve();
+            }
+            
+        }, 1000)
+    })
 
 }
 
@@ -101,7 +122,7 @@ customSettingForm.addEventListener('submit', (e) => {
     let workTime = parseInt(e.target.sessiontime.value);
     let breakTime = parseInt(e.target.breaktime.value);
     console.log("workTime:", workTime, "breakTime:", breakTime);
-    handleCustom(workTime);
+    handleCustom(workTime, breakTime);
 });
 
 buttonTypeSelector.forEach(button => {
