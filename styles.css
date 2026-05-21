@@ -54,3 +54,41 @@ main {
     border-radius: 30px;
     width: 500px;
 }
+
+.session-log__header,
+.session-log__entry {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 20px;
+    width: 100%;
+    padding: 8px 0;
+    align-items: center;
+}
+
+.session-log__header {
+    font-weight: bold;
+    border-bottom: 2px solid #333;
+    margin-bottom: 10px;
+}
+
+.session-log__entry {
+    background-color: gainsboro;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.session-log__entry p,
+.session-log__header p {
+    margin: 0;
+}
+
+.session-log__header div,
+.session-log__entry div {
+    display: contents;
+}
+
+.session-log__entries {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}

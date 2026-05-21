@@ -9,6 +9,8 @@ let startTime;
 let targetEndTime;
 let customWorkTime = 0;
 let customBreakTime = 0;
+let sessionLogEntries = [];
+let sessionStartTime = null;
 
 
 const countdownTimerDisplay = document.querySelector(".timer__display p");
@@ -21,10 +23,18 @@ const buttonTypeSelector = document.querySelectorAll(".timer__type-selection but
 
 const customSettingForm = document.querySelector(".custom-settings-menu form");
 
+const sessionLogContainer = document.querySelector(".session-log__entries");
+
 function handleRestart(){
+    if (sessionStartTime) {
+        const duration = Date.now() - sessionStartTime;
+        addLogEntry('Restarted', duration);
+    }
     clearInterval(refreshId);
     totalTime = 0;
     leftOverTime = 0;
+    leftOverTotalTime = 0;
+    sessionStartTime = null;
 }
 function handlePause(){
     isPaused = true;
@@ -46,21 +56,62 @@ function handleContinue(){
     }
 }
 
+function formatDuration(milliseconds) {
+    const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+    const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+    if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+    if (minutes > 0) return `${minutes}m ${seconds}s`;
+    return `${seconds}s`;
+}
+
+function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function addLogEntry(eventName, durationMs) {
+    const entry = {
+        event: eventName,
+        time: new Date(),
+        duration: durationMs
+    };
+    sessionLogEntries.push(entry);
+    
+    const entryDiv = document.createElement('div');
+    entryDiv.className = 'session-log__entry';
+    entryDiv.innerHTML = `
+        <p>${eventName}</p>
+        <div>
+            <p>${formatTime(entry.time)}</p>
+            <p>${durationMs ? formatDuration(durationMs) : '-'}</p>
+        </div>
+    `;
+    sessionLogContainer.appendChild(entryDiv);
+}
+
 async function startTimer(){
+    sessionStartTime = Date.now();
+    
     if (currentMode === 'Custom') {
-        await timerCountdown((customWorkTime || 25) * 60000);
+        const workDuration = (customWorkTime || 25) * 60000;
+        await timerCountdown(workDuration);
+        addLogEntry('Work Complete', workDuration);
         alert("Time for a break! Click ok to continue");
         currentModeDisplay.textContent = "Take a break!"
-        await timerCountdown((customBreakTime || 5) * 60000);
+        const breakDuration = (customBreakTime || 5) * 60000;
+        await timerCountdown(breakDuration);
+        addLogEntry('Break Complete', breakDuration);
         alert("Break Complete! Start another session!")
       
 
     } else if (currentMode === 'Standard'){
         currentModeDisplay.textContent = "Time to Work!"
         await timerCountdown(25 * 60000);
+        addLogEntry('Work Complete', 25 * 60000);
         alert("Time for a break! Click ok to continue");
         currentModeDisplay.textContent = "Take a break!"
         await timerCountdown(5 * 60000);
+        addLogEntry('Break Complete', 5 * 60000);
         alert("Break Complete! Start another session!")
     } else if (currentMode === 'Timer'){
         timerCountUp();
@@ -99,12 +150,7 @@ function timerCountdown(timeInMillisec){
             
             let difference = targetEndTime - Date.now();
 
-            //Convert the time in millisec to respective time units
-            var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-            countdownTimerDisplay.textContent =  hours + "h "+ minutes + "m " + seconds + "s ";
+            countdownTimerDisplay.textContent = formatDuration(difference);
 
             if (difference < 0){
                 clearInterval(refreshId);
@@ -129,12 +175,7 @@ function timerCountUp(){
             }
             
 
-            //Convert the time in millisec to respective time units
-            var hours = Math.floor((totalTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((totalTime % (1000 * 60)) / 1000);
-
-            countdownTimerDisplay.textContent =  hours + "h "+ minutes + "m " + seconds + "s ";
+            countdownTimerDisplay.textContent = formatDuration(totalTime);
             
         }, 1000)
 }
