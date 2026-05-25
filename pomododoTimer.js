@@ -116,6 +116,7 @@ async function startTimer(){
       
 
     } else if (currentMode === 'Standard'){
+        console.log("StartTimer");
         currentModeDisplay.textContent = "Time to Work!"
         await timerCountdown(25 * 60000);
         addLogEntry('Work Complete', 25 * 60000);
@@ -133,6 +134,7 @@ async function startTimer(){
 function handleStandard(){
     currentMode = 'Standard';
     hideCustomSettingsMenu(true);
+    countdownTimerDisplay.textContent = formatDuration(25 * 60000);
 }
 function handleCustom(workTime, breakTime){
     currentMode = 'Custom';
@@ -143,10 +145,12 @@ function handleCustom(workTime, breakTime){
     if (breakTime !== undefined) {
         customBreakTime = breakTime;
     }
+    countdownTimerDisplay.textContent = formatDuration((customWorkTime || 25) * 60000);
 }
 function handleTimer(){
     currentMode = 'Timer';
     hideCustomSettingsMenu(true);
+    countdownTimerDisplay.textContent = formatDuration(0);
     console.log("Current Mode: Timer");
 }
 
@@ -219,6 +223,9 @@ customSettingForm.addEventListener('submit', (e) => {
 
 buttonTypeSelector.forEach(button => {
     button.addEventListener('click', (e) => {
+        buttonTypeSelector.forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+
         let currentButton = mode[e.target.dataset.mode];
         
         if (currentButton) {
@@ -229,8 +236,10 @@ buttonTypeSelector.forEach(button => {
 
 buttonTimerControls.forEach(button => {
     button.addEventListener('click', (e) => {
-        let currentButton = actions[e.target.dataset.action];
+        const btn = e.target.closest('button');
+        let currentButton = actions[btn.dataset.action];
 
+        console.log(`pressed ${btn.dataset.action}`);
         if (currentButton) {
             currentButton();
         }

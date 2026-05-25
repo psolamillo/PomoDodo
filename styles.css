@@ -5,8 +5,11 @@
 
 .navigation__logo {
     display: flex;
+    gap: 5px;
 }
-
+.navigation__logo h1 {
+    margin: 5px;
+}
 main {
     display: flex;
     align-items: center;
@@ -36,6 +39,23 @@ main {
     display: flex;
     width: 80%;
     justify-content: space-between;
+    padding:10px;
+}
+
+.timer__type-selection button {
+    padding:10px;
+}
+
+.timer__type-selection button.active {
+    background-color: grey;
+    color: white;
+    border-radius: 30px;
+}
+
+.timer__display {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: large;
+    font-weight: bold;
 }
 
 .timer__controls {
@@ -45,6 +65,25 @@ main {
     gap: 50px;
 }
 
+button {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: medium;
+    border: none;
+    background: transparent;
+
+}
+.timer__controls button img{
+    height: 50px;
+    width: 50px;
+    padding: 10px;
+}
+
+.timer__controls button img:hover, .timer__type-selection button:hover{
+    background-color: grey;
+    border-radius: 30px;
+
+}
 .custom-settings-menu form{
     display: flex;
     flex-direction: column;
